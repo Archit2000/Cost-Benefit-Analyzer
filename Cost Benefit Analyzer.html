@@ -529,6 +529,7 @@
             const taxRate = parseFloat(document.getElementById('taxRate').value) / 100 || 0;
             const npvDifferenceThreshold = parseFloat(document.getElementById('npvDifferenceThreshold').value) || 0;
 
+            // --- HELPER FUNCTIONS (getMonthlyLoanPayment defined outside) ---
             const getPresentValue = (amount, year) => amount / Math.pow(1 + discountRate, year);
             const getAnnualizedValue = (value, frequency) => {
                 switch(frequency) {
@@ -537,14 +538,15 @@
                     default: return value;
                 }
             };
-            const getLoanInterest = (loanAmount, interestRate, loanTerm) => {
-                if (loanAmount <= 0) return 0;
-                const r = (interestRate / 100) / 12;
-                const n = loanTerm * 12;
+
+            const getMonthlyLoanPayment = (loanAmount, interestRate, loanTerm) => {
+                if (loanAmount <= 0 || interestRate <= 0 || loanTerm <= 0) return 0;
+                const r = (interestRate / 100) / 12; // Monthly interest rate
+                const n = loanTerm * 12; // Total number of payments
                 const monthlyPayment = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-                const totalPaid = monthlyPayment * n;
-                return totalPaid - loanAmount;
+                return isNaN(monthlyPayment) ? 0 : monthlyPayment;
             };
+            // REMOVED getLoanInterest, replaced with getMonthlyLoanPayment (defined above)
             const getFinalValue = (initialValue, depreciationMethod, depreciationRate, years) => {
                 if (depreciationMethod === 'straightLine') {
                     const finalValue = initialValue - ((initialValue * (depreciationRate / 100)) * years);
@@ -560,9 +562,13 @@
             const newInterestRate = parseFloat(document.getElementById('newInterestRate').value) || 0;
             const newLoanTerm = parseFloat(document.getElementById('newLoanTerm').value) || 0;
             
-            let npvA = -(newPurchasePrice - newLoanAmount);
-            const newTotalInterest = getLoanInterest(newLoanAmount, newInterestRate, newLoanTerm);
+            // Initial cash outflow is the down payment
+            let npvA = -(newPurchasePrice - newLoanAmount); 
             
+            // ADDED: Calculate the annual loan payment
+            const monthlyLoanPaymentA = getMonthlyLoanPayment(newLoanAmount, newInterestRate, newLoanTerm);
+            const annualLoanPaymentA = monthlyLoanPaymentA * 12;
+
             const newDepreciationMethod = document.getElementById('newDepreciationMethod').value;
             const newDepreciationRate = parseFloat(document.getElementById('newDepreciationRate').value) || 0;
             const newFinalValue = getFinalValue(newPurchasePrice, newDepreciationMethod, newDepreciationRate, timePeriod);
@@ -571,9 +577,12 @@
             const capitalGainA = newResaleValue - newPurchasePrice;
             const taxImpactA = capitalGainA > 0 ? capitalGainA * taxRate : 0;
 
+            // REMOVED: The incorrect block that calculated and discounted total interest
+            /*
             if (newLoanAmount > 0) {
                 npvA -= getPresentValue(newTotalInterest, newLoanTerm);
             }
+            */
             
             const newRecurringItems = document.querySelectorAll('#newRecurringList .item');
             for (let year = 1; year <= timePeriod; year++) {
@@ -592,17 +601,25 @@
                         yearNetValue += inflatedValue;
                     }
                 });
+
+                // ADDED: Subtract the annual loan payment for each year of the loan term
+                if (annualLoanPaymentA > 0 && year <= newLoanTerm) {
+                    // Note: Loan payments are typically not inflation-adjusted
+                    yearNetValue -= annualLoanPaymentA;
+                }
+
                 npvA += getPresentValue(yearNetValue, year);
             }
             npvA += getPresentValue(newResaleValue - taxImpactA, timePeriod);
 
             // --- Calculate NPV for Option B (Old) ---
+            // (No changes needed for Option B's calculations)
             const oldInitialCost = parseFloat(document.getElementById('oldInitialCost').value) || 0;
             const oldCurrentValue = parseFloat(document.getElementById('oldCurrentValue').value) || 0;
 
             let npvB = -oldInitialCost;
             if (oldCurrentValue > 0) {
-                npvB -= oldCurrentValue;
+                npvB -= oldCurrentValue; // Opportunity cost
             }
 
             const oldDepreciationMethod = document.getElementById('oldDepreciationMethod').value;
@@ -644,6 +661,7 @@
             });
 
             // --- Display the result and recommendation ---
+            // (No changes needed in the display logic)
             const resultElement = document.getElementById('result');
             resultElement.innerHTML = `
                 <p>Net Present Value (NPV) for Option A: <strong>$${npvA.toFixed(2)}</strong></p>
@@ -676,6 +694,7 @@
 
             resultElement.appendChild(resultBox);
         }
+
 
         window.onload = function() {
             clearAllFields();
