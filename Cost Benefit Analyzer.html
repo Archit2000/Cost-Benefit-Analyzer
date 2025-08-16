@@ -1,704 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Ultimate Financial Analyzer</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1000px; margin: 30px auto; padding: 25px; background-color: #f4f7f9; color: #333; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #007BFF; margin-bottom: 25px; }
-        .manual-section { background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
-        .manual-section h2 { margin-top: 0; color: #0056b3; }
-        .manual-section h4 { margin: 15px 0 5px; color: #212529; }
-        .manual-section p, .manual-section ul { font-size: 0.95em; line-height: 1.6; }
-        .manual-section li { margin-bottom: 5px; }
-
-        .scenario-selector { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .scenario-selector label { font-weight: bold; }
-        .scenario-selector select { padding: 8px; border: 1px solid #ced4da; border-radius: 5px; }
-        
-        .global-settings { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; margin-bottom: 25px; padding: 15px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .global-settings .input-group { flex: 1; min-width: 150px; }
-
-        .container { display: flex; flex-wrap: wrap; gap: 25px; }
-        .option-section { flex: 1; min-width: 300px; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .option-section h2 { text-align: center; color: #495057; border-bottom: 2px solid #007BFF; padding-bottom: 10px; margin-bottom: 20px; }
-        
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
-        input[type="number"], input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; box-sizing: border-box; }
-        
-        .item-list { list-style: none; padding: 0; }
-        .item { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .item input[type="text"] { flex-grow: 1; min-width: 80px; }
-        .item input[type="number"] { width: 100px; }
-        .item select { width: 85px; }
-        
-        .button-container { text-align: center; margin-top: 25px; }
-        .main-button { padding: 12px 30px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; transition: background-color 0.3s ease; }
-        .main-button:hover { background-color: #0056b3; }
-
-        .add-button, .remove-button { background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.9em; }
-        .remove-button { background-color: #dc3545; }
-        .add-button:hover { background-color: #218838; }
-        .remove-button:hover { background-color: #c82333; }
-        
-        #result { margin-top: 25px; font-weight: bold; font-size: 1.3em; text-align: center; padding: 20px; border-radius: 8px; }
-        #recommendation { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 1.1em; text-align: center; font-weight: bold; }
-        .cheaper { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .more-expensive { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .neutral { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Simple Cost–Benefit Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background:#f8fafc; }
+    .card { margin-bottom: 1rem; }
+    .remove-option { margin-top: 2rem; }
+    canvas { background:#fff; border:1px solid #dee2e6; border-radius: 8px; padding: 8px; }
+  </style>
 </head>
-<body>
+<body class="container py-4">
 
-    <h1>Ultimate Financial Analyzer</h1>
+  <h1 class="text-center text-primary mb-4">Simple Cost–Benefit Analyzer</h1>
 
-    <div class="manual-section">
-        <h2>How to Use this Calculator</h2>
-        <p>This tool helps you make a financially sound decision by comparing two options over a set period. It calculates the **Net Present Value (NPV)** for each option, which is the gold standard for investment analysis.</p>
-
-        <h4>What is NPV?</h4>
-        <p>NPV accounts for the **time value of money**, which means a dollar today is worth more than a dollar tomorrow. A positive NPV means the investment will be profitable. When comparing two options, the one with the **higher NPV is the better financial choice**.</p>
-        
-        ---
-
-        <h4>Global Settings</h4>
-        <ul>
-            <li>**Time Period (in years):** The duration for your analysis. For example, if you plan to own a car for 5 years, enter 5.</li>
-            <li>**Discount Rate (%):** This is the expected rate of return you could get on an alternative investment. A higher rate means you value a dollar today more than a dollar in the future.</li>
-            <li>**Inflation Rate (%):** The rate at which costs increase and benefits decrease over time.</li>
-            <li>**Tax Rate (%):** The rate used to calculate the tax impact on costs and benefits, such as capital gains.</li>
-            <li>**Recommendation Margin ($):** This is the dollar amount that defines a "close" financial outcome. If the difference between the NPVs of the two options is less than this amount, the tool will recommend considering non-financial factors.</li>
-        </ul>
-
-        ---
-
-        <h4>Depreciation Methods</h4>
-        <p>Depreciation is the reduction in an asset's value over time. Choosing the right method helps you accurately project its final resale value.</p>
-        <ul>
-            <li>**Straight-Line:** A simple method where an asset loses the same amount of value each year. The loss is calculated as `(Initial Value - Resale Value) / Time Period`. For example, a $10,000 asset with a $1,000 salvage value over 5 years loses $1,800 per year.</li>
-            <li>**Percentage per Year:** An accelerated method where the asset loses a fixed percentage of its *current* value each year. This method accounts for the fact that many assets, like cars, lose a significant portion of their value in their early years. For example, a $10,000 asset with a 10% rate loses $1,000 in the first year, but only $900 (10% of $9,000) in the second year.</li>
-        </ul>
-
-        ---
-        
-        <h4>Recurring and Non-Annual Items</h4>
-        <p>This is where you can add all the ongoing costs and benefits for each option. The tool will automatically adjust for inflation.</p>
-        <ul>
-            <li>**Item Name:** A descriptive label like "Fuel" or "Repairs."</li>
-            <li>**Item Type:** Choose if the item is a **Cost** (negative cash flow) or a **Benefit** (positive cash flow).</li>
-            <li>**Amount & Frequency:** Enter the value and specify if it occurs **Yearly**, **Quarterly** (x4), or **Monthly** (x12). The calculator will convert these to an annual value for you.</li>
-            <li>**Non-Annual Costs:** Use this for one-time, large costs that occur in a specific year, such as a major repair.</li>
-        </ul>
-
-        ---
-
-        <h4>Initial Costs and Benefits (Option B)</h4>
-        <p>This section is designed to handle the unique financial situation of keeping an existing asset.</p>
-        <ul>
-            <li>**Initial Repair/Upgrade Cost:** Any immediate cost to get the existing asset into good working condition.</li>
-            <li>**Current Value (Opportunity Cost):** This represents the money you could get by selling the asset **today**. By keeping the asset, you are forgoing this cash, so it is treated as a cost in the NPV calculation.</li>
-        </ul>
-
-        ---
-
-        <h4>Example Scenarios</h4>
-        <p>Choose a scenario from the dropdown to see how the calculator works with realistic numbers.</p>
-        <ul>
-            <li>**Lease vs. Buy a Car:** Compares the financial implications of leasing (Option A) vs. buying (Option B) the same car.</li>
-            <li>**New Appliance vs. Repairing Old:** Analyzes whether a new, energy-efficient appliance (Option A) is more cost-effective than repairing an old one (Option B).</li>
-            <li>**Hiring a Freelancer vs. In-house Employee:** Compares the costs and benefits of hiring a full-time employee (Option A) versus using a freelancer (Option B) for a project or ongoing work.</li>
-            <li>**Buying a Car:** Compares buying a new car with a loan versus keeping an old car with repair costs.</li>
-            <li>**Renovating a Home:** Compares a full renovation with high initial costs but increased home value versus a partial renovation with lower costs.</li>
-            <li>**Starting a Business:** Compares investing in a new business venture versus expanding an existing one. The new venture has a loan, while the existing one has initial upgrade costs and generates revenue.</li>
-        </ul>
+  <!-- Global Settings -->
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="timeHorizon" class="form-label">Time Horizon (years)</label>
+          <input type="number" id="timeHorizon" class="form-control" value="5" min="1">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Apply Inflation</label><br>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="applyInflation" checked>
+            <label class="form-check-label" for="applyInflation">Yes</label>
+          </div>
+        </div>
+        <div class="col-md-4" id="inflationBox">
+          <label for="inflationRate" class="form-label">Inflation Rate (%)</label>
+          <input type="number" id="inflationRate" class="form-control" value="2" step="0.1" min="0">
+          <div class="form-text">Applied to future recurring and scheduled costs/benefits.</div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="scenario-selector">
-        <label for="scenarioSelect">Choose a Scenario:</label>
-        <select id="scenarioSelect" onchange="loadScenario(this.value)">
-            <option value="custom">-- Custom Input --</option>
-            <option value="leaseBuyCar">Lease vs. Buy a Car</option>
-            <option value="appliance">New Appliance vs. Repairing Old</option>
-            <option value="freelancerEmployee">Hiring a Freelancer vs. In-house Employee</option>
-            <option value="car">Buying a Car</option>
-            <option value="home">Renovating a Home</option>
-            <option value="business">Starting a Business</option>
-        </select>
+  <!-- Options -->
+  <div id="optionsContainer"></div>
+
+  <!-- Action Buttons -->
+  <div class="mb-3 d-flex gap-2">
+    <button class="btn btn-outline-secondary" id="addOptionBtn">+ Add Option</button>
+    <button class="btn btn-primary" id="calcBtn">Calculate</button>
+  </div>
+
+  <!-- Results -->
+  <div id="summary"></div>
+  <div id="tables"></div>
+  <div class="card">
+    <div class="card-body">
+      <canvas id="cfChart" height="150"></canvas>
     </div>
+  </div>
 
-    <div class="global-settings">
-        <div class="input-group">
-            <label>Time Period (in years):</label>
-            <input type="number" id="timePeriod" min="1">
+  <!-- Bootstrap JS (for toggle etc) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ========== Helpers ==========
+    const FREQ = { yearly: 1, quarterly: 4, monthly: 12 };
+    function fmt(n){ return (isFinite(n)? n:0).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+    function annualize(amount, freq){ return (Number(amount)||0) * (FREQ[freq]||1); }
+    function estFinalValue(initial, method, ratePct, years){
+      const init = Number(initial)||0;
+      if(!init) return 0;
+      if(method === 'percentage'){
+        const r = (Number(ratePct)||0) / 100;
+        return Math.max(init * Math.pow(1 - r, years), 0);
+      }
+      const depPerYr = init / years;
+      return Math.max(init - depPerYr * years, 0);
+    }
+
+    let optionIdx = 0;
+
+    function addOption(initialData){
+      const idx = optionIdx++;
+      const container = document.getElementById('optionsContainer');
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5>Option ${String.fromCharCode(65+idx)}</h5>
+            <button class="btn btn-sm btn-outline-danger remove-option" ${idx===0?'disabled':''}>Remove</button>
+          </div>
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Purchase Price (Year 0)</label>
+              <input type="number" class="form-control opt-purchase" value="${initialData?.purchase ?? ''}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ending Value at Horizon (Resale)</label>
+              <input type="number" class="form-control opt-resale" value="${initialData?.resale ?? ''}">
+              <div class="form-text">If entered, depreciation is ignored.</div>
+            </div>
+          </div>
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Depreciation Method (if resale empty)</label>
+              <select class="form-select opt-dep-method">
+                <option value="straightLine">Straight-Line</option>
+                <option value="percentage">Declining % per Year</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Depreciation Rate (%)</label>
+              <input type="number" class="form-control opt-dep-rate">
+            </div>
+          </div>
+
+          <h6 class="mt-3">Recurring Items</h6>
+          <ul class="list-unstyled opt-recurring"></ul>
+          <button class="btn btn-sm btn-outline-secondary add-recurring">+ Add Recurring</button>
+
+          <h6 class="mt-3">Non-Annual Items</h6>
+          <ul class="list-unstyled opt-nonannual"></ul>
+          <button class="btn btn-sm btn-outline-secondary add-nonannual">+ Add Non-Annual</button>
         </div>
-        <div class="input-group">
-            <label>Discount Rate (%):</label>
-            <input type="number" id="discountRate" min="0">
-        </div>
-        <div class="input-group">
-            <label>Inflation Rate (%):</label>
-            <input type="number" id="inflationRate" min="0">
-        </div>
-        <div class="input-group">
-            <label>Tax Rate (%):</label>
-            <input type="number" id="taxRate" min="0">
-        </div>
-        <div class="input-group">
-            <label>Recommendation Margin ($):</label>
-            <input type="number" id="npvDifferenceThreshold" min="0" value="1000">
-        </div>
-    </div>
+      `;
 
-    <div class="container">
-        <div class="option-section" id="optionA">
-            <h2>Option A</h2>
-            <h3>Initial Investment</h3>
-            <div class="input-group">
-                <label>Purchase Price:</label>
-                <input type="number" id="newPurchasePrice">
-            </div>
+      // Remove
+      card.querySelector('.remove-option').addEventListener('click', () => {
+        card.remove(); calculate();
+      });
 
-            <h3>Financing Details</h3>
-            <div class="input-group">
-                <label>Loan Amount:</label>
-                <input type="number" id="newLoanAmount">
-            </div>
-            <div class="input-group">
-                <label>Interest Rate (%):</label>
-                <input type="number" id="newInterestRate" min="0">
-            </div>
-            <div class="input-group">
-                <label>Loan Term (in years):</label>
-                <input type="number" id="newLoanTerm" min="1">
-            </div>
+      // Add recurring
+      card.querySelector('.add-recurring').addEventListener('click', () => {
+        const ul = card.querySelector('.opt-recurring');
+        const li = document.createElement('li');
+        li.className = 'd-flex gap-2 align-items-center mt-2';
+        li.innerHTML = `
+          <input type="text" class="form-control r-name" placeholder="Name">
+          <select class="form-select r-type"><option value="cost">Cost</option><option value="benefit">Benefit</option></select>
+          <input type="number" class="form-control r-amount" placeholder="Amount">
+          <select class="form-select r-freq"><option value="yearly">Yearly</option><option value="quarterly">Quarterly</option><option value="monthly">Monthly</option></select>
+          <button class="btn btn-sm btn-outline-danger remove">X</button>
+        `;
+        li.querySelector('.remove').addEventListener('click',()=>li.remove());
+        ul.appendChild(li);
+      });
 
-            <h3>Depreciation</h3>
-            <div class="input-group">
-                <label>Resale Value (at end):</label>
-                <input type="number" id="newResaleValue">
-            </div>
-            <div class="input-group">
-                <label>Depreciation Method:</label>
-                <select id="newDepreciationMethod">
-                    <option value="straightLine">Straight-Line</option>
-                    <option value="percentage">Percentage per Year</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Depreciation Rate (%):</label>
-                <input type="number" id="newDepreciationRate" min="0">
-            </div>
+      // Add non-annual
+      card.querySelector('.add-nonannual').addEventListener('click', () => {
+        const ul = card.querySelector('.opt-nonannual');
+        const li = document.createElement('li');
+        li.className = 'd-flex gap-2 align-items-center mt-2';
+        li.innerHTML = `
+          <input type="text" class="form-control n-name" placeholder="Name">
+          <input type="number" class="form-control n-amount" placeholder="Amount (neg=cost)">
+          <input type="number" class="form-control n-year" placeholder="Year" min="1">
+          <button class="btn btn-sm btn-outline-danger remove">X</button>
+        `;
+        li.querySelector('.remove').addEventListener('click',()=>li.remove());
+        ul.appendChild(li);
+      });
 
-            <h3>Recurring Items</h3>
-            <ul id="newRecurringList" class="item-list"></ul>
-            <button class="add-button" onclick="addItem('newRecurringList')">Add Recurring Item</button>
-        </div>
-
-        <div class="option-section" id="optionB">
-            <h2>Option B</h2>
-            <h3>Initial Costs and Benefits</h3>
-            <div class="input-group">
-                <label>Initial Repair/Upgrade Cost:</label>
-                <input type="number" id="oldInitialCost">
-            </div>
-            <div class="input-group">
-                <label>Current Value (Opportunity Cost):</label>
-                <input type="number" id="oldCurrentValue">
-            </div>
-            
-            <h3>Depreciation</h3>
-            <div class="input-group">
-                <label>Resale Value (at end):</label>
-                <input type="number" id="oldResaleValue">
-            </div>
-            <div class="input-group">
-                <label>Depreciation Method:</label>
-                <select id="oldDepreciationMethod">
-                    <option value="straightLine">Straight-Line</option>
-                    <option value="percentage">Percentage per Year</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Depreciation Rate (%):</label>
-                <input type="number" id="oldDepreciationRate" min="0">
-            </div>
-
-            <h3>Recurring Items</h3>
-            <ul id="oldRecurringList" class="item-list"></ul>
-            <button class="add-button" onclick="addItem('oldRecurringList')">Add Recurring Item</button>
-
-            <h3>Non-Annual Costs</h3>
-            <ul id="oldNonAnnualList" class="item-list"></ul>
-            <button class="add-button" onclick="addNonAnnualItem('oldNonAnnualList')">Add Non-Annual Cost</button>
-        </div>
-    </div>
-
-    <div class="button-container">
-        <button class="main-button" onclick="calculateUltimate()">Calculate Net Present Value</button>
-    </div>
-
-    <div id="result"></div>
-    <div id="recommendation"></div>
-
-    <script>
-        function clearAllFields() {
-            document.getElementById('timePeriod').value = '';
-            document.getElementById('discountRate').value = '';
-            document.getElementById('inflationRate').value = '';
-            document.getElementById('taxRate').value = '';
-            document.getElementById('npvDifferenceThreshold').value = '1000';
-
-            document.getElementById('newPurchasePrice').value = '';
-            document.getElementById('newLoanAmount').value = '';
-            document.getElementById('newInterestRate').value = '';
-            document.getElementById('newLoanTerm').value = '';
-            document.getElementById('newResaleValue').value = '';
-            document.getElementById('newDepreciationRate').value = '';
-            
-            document.getElementById('oldInitialCost').value = '';
-            document.getElementById('oldCurrentValue').value = '';
-            document.getElementById('oldResaleValue').value = '';
-            document.getElementById('oldDepreciationRate').value = '';
-
-            document.getElementById('newRecurringList').innerHTML = '';
-            document.getElementById('oldRecurringList').innerHTML = '';
-            document.getElementById('oldNonAnnualList').innerHTML = '';
-            document.getElementById('result').innerHTML = '';
-            document.getElementById('recommendation').innerHTML = '';
-            document.getElementById('recommendation').className = '';
+      // Auto-clear depreciation when resale is entered
+      const resaleEl = card.querySelector('.opt-resale');
+      const depMethodEl = card.querySelector('.opt-dep-method');
+      const depRateEl = card.querySelector('.opt-dep-rate');
+      function toggleDep(){
+        if(parseFloat(resaleEl.value)){
+          depMethodEl.value = 'straightLine'; depRateEl.value='';
+          depMethodEl.disabled = true; depRateEl.disabled = true;
+        } else {
+          depMethodEl.disabled = false; depRateEl.disabled = false;
         }
+      }
+      resaleEl.addEventListener('input', toggleDep);
+      toggleDep();
 
-        const scenarios = {
-            leaseBuyCar: {
-                title: 'Lease vs. Buy a Car',
-                timePeriod: 3, discountRate: 5, inflationRate: 2, taxRate: 15,
-                optionA: {
-                    purchasePrice: 0, loanAmount: 0, interestRate: 0, loanTerm: 0,
-                    resaleValue: 0, depreciationMethod: 'straightLine', depreciationRate: 0,
-                    recurring: [
-                        { name: 'Lease Payment', type: 'cost', value: 400, freq: 'monthly' },
-                        { name: 'Fuel', type: 'cost', value: 200, freq: 'monthly' },
-                        { name: 'Insurance', type: 'cost', value: 120, freq: 'monthly' },
-                    ]
-                },
-                optionB: {
-                    initialCost: 10000, currentValue: 0, resaleValue: 25000, depreciationMethod: 'percentage', depreciationRate: 15,
-                    recurring: [
-                        { name: 'Loan Payment', type: 'cost', value: 650, freq: 'monthly' },
-                        { name: 'Fuel', type: 'cost', value: 200, freq: 'monthly' },
-                        { name: 'Insurance', type: 'cost', value: 120, freq: 'monthly' },
-                    ],
-                    nonAnnual: []
-                }
-            },
-            appliance: {
-                title: 'New Appliance vs. Repairing Old',
-                timePeriod: 10, discountRate: 4, inflationRate: 2, taxRate: 0,
-                optionA: {
-                    purchasePrice: 1500, loanAmount: 0, interestRate: 0, loanTerm: 0,
-                    resaleValue: 200, depreciationMethod: 'straightLine', depreciationRate: 10,
-                    recurring: [
-                        { name: 'Utility Cost', type: 'cost', value: 50, freq: 'monthly' },
-                    ]
-                },
-                optionB: {
-                    initialCost: 300, currentValue: 100, resaleValue: 0, depreciationMethod: 'straightLine', depreciationRate: 0,
-                    recurring: [
-                        { name: 'Utility Cost', type: 'cost', value: 80, freq: 'monthly' },
-                        { name: 'Minor Repairs', type: 'cost', value: 200, freq: 'yearly' },
-                    ],
-                    nonAnnual: [
-                        { name: 'Major Repair', value: 500, year: 5 }
-                    ]
-                }
-            },
-            freelancerEmployee: {
-                title: 'Hiring a Freelancer vs. In-house Employee',
-                timePeriod: 1, discountRate: 10, inflationRate: 3, taxRate: 20,
-                optionA: {
-                    purchasePrice: 0, loanAmount: 0, interestRate: 0, loanTerm: 0,
-                    resaleValue: 0, depreciationMethod: 'straightLine', depreciationRate: 0,
-                    recurring: [
-                        { name: 'Salary', type: 'cost', value: 5000, freq: 'monthly' },
-                        { name: 'Benefits', type: 'cost', value: 1000, freq: 'monthly' },
-                        { name: 'Productivity Gain', type: 'benefit', value: 8000, freq: 'monthly' }
-                    ]
-                },
-                optionB: {
-                    initialCost: 5000, currentValue: 0, resaleValue: 0, depreciationMethod: 'straightLine', depreciationRate: 0,
-                    recurring: [
-                        { name: 'Contract Cost', type: 'cost', value: 2000, freq: 'monthly' },
-                        { name: 'Project Revenue', type: 'benefit', value: 5000, freq: 'monthly' }
-                    ],
-                    nonAnnual: [
-                        { name: 'Project Fee', value: 10000, year: 1 }
-                    ]
-                }
-            },
-            car: {
-                title: 'Buying a Car',
-                timePeriod: 5, discountRate: 5, inflationRate: 2, taxRate: 15,
-                optionA: {
-                    purchasePrice: 40000, loanAmount: 30000, interestRate: 5, loanTerm: 5,
-                    resaleValue: 18000, depreciationMethod: 'percentage', depreciationRate: 15,
-                    recurring: [
-                        { name: 'Fuel', type: 'cost', value: 2000, freq: 'yearly' },
-                        { name: 'Insurance', type: 'cost', value: 1500, freq: 'yearly' },
-                    ]
-                },
-                optionB: {
-                    initialCost: 2000, currentValue: 10000, resaleValue: 3000, depreciationMethod: 'straightLine', depreciationRate: 10,
-                    recurring: [
-                        { name: 'Fuel', type: 'cost', value: 2500, freq: 'yearly' },
-                        { name: 'Insurance', type: 'cost', value: 1000, freq: 'yearly' },
-                        { name: 'Repairs', type: 'cost', value: 800, freq: 'yearly' },
-                    ],
-                    nonAnnual: [
-                        { name: 'Major Repair', value: 2000, year: 3 }
-                    ]
-                }
-            },
-            home: {
-                title: 'Renovating a Home',
-                timePeriod: 10, discountRate: 7, inflationRate: 3, taxRate: 20,
-                optionA: {
-                    purchasePrice: 200000, loanAmount: 180000, interestRate: 6, loanTerm: 10,
-                    resaleValue: 250000, depreciationMethod: 'percentage', depreciationRate: 2,
-                    recurring: [
-                        { name: 'Maintenance', type: 'cost', value: 5000, freq: 'yearly' },
-                        { name: 'Rental Income', type: 'benefit', value: 12000, freq: 'yearly' },
-                    ]
-                },
-                optionB: {
-                    initialCost: 50000, currentValue: 150000, resaleValue: 180000, depreciationMethod: 'straightLine', depreciationRate: 1,
-                    recurring: [
-                        { name: 'Maintenance', type: 'cost', value: 8000, freq: 'yearly' },
-                        { name: 'Rental Income', type: 'benefit', value: 8000, freq: 'yearly' },
-                    ],
-                    nonAnnual: [
-                        { name: 'Roof Repair', value: 15000, year: 6 }
-                    ]
-                }
-            },
-            business: {
-                title: 'Starting a Business',
-                timePeriod: 3, discountRate: 10, inflationRate: 2, taxRate: 25,
-                optionA: {
-                    purchasePrice: 75000, loanAmount: 75000, interestRate: 8, loanTerm: 3,
-                    resaleValue: 30000, depreciationMethod: 'percentage', depreciationRate: 20,
-                    recurring: [
-                        { name: 'Operating Costs', type: 'cost', value: 15000, freq: 'yearly' },
-                        { name: 'Revenue', type: 'benefit', value: 40000, freq: 'yearly' },
-                    ]
-                },
-                optionB: {
-                    initialCost: 10000, currentValue: 50000, resaleValue: 50000, depreciationMethod: 'straightLine', depreciationRate: 5,
-                    recurring: [
-                        { name: 'Operating Costs', type: 'cost', value: 10000, freq: 'yearly' },
-                        { name: 'Revenue', type: 'benefit', value: 25000, freq: 'yearly' },
-                    ],
-                    nonAnnual: []
-                }
-            }
-        };
+      container.appendChild(card);
+    }
 
-        function loadScenario(scenarioName) {
-            clearAllFields();
-            if (scenarioName === 'custom') {
-                return;
-            }
+    addOption({ purchase:40000, resale:18000 });
 
-            const scenario = scenarios[scenarioName];
-            
-            document.getElementById('timePeriod').value = scenario.timePeriod;
-            document.getElementById('discountRate').value = scenario.discountRate;
-            document.getElementById('inflationRate').value = scenario.inflationRate;
-            document.getElementById('taxRate').value = scenario.taxRate;
-            
-            document.getElementById('newPurchasePrice').value = scenario.optionA.purchasePrice;
-            document.getElementById('newLoanAmount').value = scenario.optionA.loanAmount;
-            document.getElementById('newInterestRate').value = scenario.optionA.interestRate;
-            document.getElementById('newLoanTerm').value = scenario.optionA.loanTerm;
-            document.getElementById('newResaleValue').value = scenario.optionA.resaleValue;
-            document.getElementById('newDepreciationMethod').value = scenario.optionA.depreciationMethod;
-            document.getElementById('newDepreciationRate').value = scenario.optionA.depreciationRate;
+    document.getElementById('addOptionBtn').addEventListener('click', () => addOption());
 
-            document.getElementById('oldInitialCost').value = scenario.optionB.initialCost;
-            document.getElementById('oldCurrentValue').value = scenario.optionB.currentValue;
-            document.getElementById('oldResaleValue').value = scenario.optionB.resaleValue;
-            document.getElementById('oldDepreciationMethod').value = scenario.optionB.depreciationMethod;
-            document.getElementById('oldDepreciationRate').value = scenario.optionB.depreciationRate;
+    // ========== Calculation ==========
+    document.getElementById('calcBtn').addEventListener('click', calculate);
 
-            scenario.optionA.recurring.forEach(item => {
-                addItem('newRecurringList');
-                const lastItem = document.getElementById('newRecurringList').lastChild;
-                lastItem.querySelector('input[type="text"]').value = item.name;
-                lastItem.querySelector('input[type="number"]').value = item.value;
-                lastItem.querySelectorAll('select')[0].value = item.type;
-                lastItem.querySelectorAll('select')[1].value = item.freq;
-            });
-            
-            scenario.optionB.recurring.forEach(item => {
-                addItem('oldRecurringList');
-                const lastItem = document.getElementById('oldRecurringList').lastChild;
-                lastItem.querySelector('input[type="text"]').value = item.name;
-                lastItem.querySelector('input[type="number"]').value = item.value;
-                lastItem.querySelectorAll('select')[0].value = item.type;
-                lastItem.querySelectorAll('select')[1].value = item.freq;
-            });
+    function calculate(){
+      const T = parseInt(document.getElementById('timeHorizon').value)||1;
+      const applyInfl = document.getElementById('applyInflation').checked;
+      const infl = applyInfl ? ((parseFloat(document.getElementById('inflationRate').value)||0)/100) : 0;
 
-            scenario.optionB.nonAnnual.forEach(item => {
-                addNonAnnualItem('oldNonAnnualList');
-                const lastItem = document.getElementById('oldNonAnnualList').lastChild;
-                lastItem.querySelectorAll('input')[0].value = item.name;
-                lastItem.querySelectorAll('input')[1].value = item.value;
-                lastItem.querySelectorAll('input')[2].value = item.year;
-            });
+      const optionCards = [...document.querySelectorAll('#optionsContainer .card')];
+      const summaries=[], tablesHTML=[], chartSeries=[];
+
+      optionCards.forEach((card,idx)=>{
+        const name=`Option ${String.fromCharCode(65+idx)}`;
+        const purchase=parseFloat(card.querySelector('.opt-purchase').value)||0;
+        const resale=parseFloat(card.querySelector('.opt-resale').value)||0;
+        const depMethod=card.querySelector('.opt-dep-method').value;
+        const depRate=parseFloat(card.querySelector('.opt-dep-rate').value)||0;
+
+        const cash={};
+        // Recurring
+        card.querySelectorAll('.opt-recurring li').forEach(li=>{
+          const amount=parseFloat(li.querySelector('.r-amount').value)||0;
+          const type=li.querySelector('.r-type').value;
+          const freq=li.querySelector('.r-freq').value;
+          for(let y=1;y<=T;y++){
+            const a=annualize(amount,freq) * Math.pow(1+infl,y-1);
+            cash[y]=(cash[y]||0)+(type==='cost'?-a:a);
+          }
+        });
+        // Non-annual
+        card.querySelectorAll('.opt-nonannual li').forEach(li=>{
+          const amt=parseFloat(li.querySelector('.n-amount').value)||0;
+          const yr=parseInt(li.querySelector('.n-year').value)||0;
+          if(yr>=1&&yr<=T){
+            const a=amt * Math.pow(1+infl,yr-1);
+            cash[yr]=(cash[yr]||0)+a;
+          }
+        });
+
+        const endVal=resale>0?resale:estFinalValue(purchase,depMethod,depRate,T);
+        cash[T]=(cash[T]||0)+endVal;
+
+        let cumulative=-purchase;
+        const series=[cumulative];
+        let table=`<div class="card"><div class="card-body"><h5>${name}</h5>
+                   <table class="table table-bordered table-sm">
+                   <thead><tr><th>Year</th><th>Cash Flow</th><th>Cumulative</th></tr></thead><tbody>
+                   <tr><td>0</td><td>-${fmt(purchase)}</td><td>${fmt(cumulative)}</td></tr>`;
+        for(let y=1;y<=T;y++){
+          const cf=cash[y]||0;
+          cumulative+=cf;
+          series.push(cumulative);
+          table+=`<tr><td>${y}</td><td>${fmt(cf)}</td><td>${fmt(cumulative)}</td></tr>`;
         }
-        
-        function addItem(listId) {
-            const list = document.getElementById(listId);
-            const newItem = document.createElement('li');
-            newItem.className = 'item';
-            
-            const labelInput = document.createElement('input');
-            labelInput.type = 'text';
-            labelInput.placeholder = 'Item Name';
-            
-            const typeSelect = document.createElement('select');
-            typeSelect.innerHTML = '<option value="cost">Cost</option><option value="benefit">Benefit</option>';
+        table+=`</tbody></table></div></div>`;
+        tablesHTML.push(table);
+        chartSeries.push({ name, data:series });
+        summaries.push({ name, final:cumulative });
+      });
 
-            const valueInput = document.createElement('input');
-            valueInput.type = 'number';
-            valueInput.placeholder = 'Amount';
+      summaries.sort((a,b)=>b.final-a.final);
+      const best=summaries[0];
+      document.getElementById('summary').innerHTML=`
+        <div class="card"><div class="card-body">
+        <h4>Summary</h4>
+        ${summaries.map(s=>`<div>${s.name}: <b>${fmt(s.final)}</b></div>`).join('')}
+        <div class="alert alert-success mt-2">Best option: <b>${best.name}</b></div>
+        <div class="form-text">Note: ${document.getElementById('applyInflation').checked?'Inflation applied':'Inflation OFF'}.</div>
+        </div></div>
+      `;
+      document.getElementById('tables').innerHTML=tablesHTML.join('');
 
-            const freqSelect = document.createElement('select');
-            freqSelect.innerHTML = '<option value="yearly">Yearly</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option>';
-            
-            const removeButton = document.createElement('button');
-            removeButton.textContent = 'Remove';
-            removeButton.className = 'remove-button';
-            removeButton.onclick = function() { removeItem(this); };
+      drawChart(chartSeries,T);
+    }
 
-            newItem.appendChild(labelInput);
-            newItem.appendChild(typeSelect);
-            newItem.appendChild(valueInput);
-            newItem.appendChild(freqSelect);
-            newItem.appendChild(removeButton);
-            list.appendChild(newItem);
-        }
-
-        function addNonAnnualItem(listId) {
-            const list = document.getElementById(listId);
-            const newItem = document.createElement('li');
-            newItem.className = 'item';
-
-            const labelInput = document.createElement('input');
-            labelInput.type = 'text';
-            labelInput.placeholder = 'Cost Name';
-
-            const valueInput = document.createElement('input');
-            valueInput.type = 'number';
-            valueInput.placeholder = 'Cost Amount';
-
-            const yearInput = document.createElement('input');
-            yearInput.type = 'number';
-            yearInput.placeholder = 'Year';
-
-            const removeButton = document.createElement('button');
-            removeButton.textContent = 'Remove';
-            removeButton.className = 'remove-button';
-            removeButton.onclick = function() { removeItem(this); };
-            
-            newItem.appendChild(labelInput);
-            newItem.appendChild(valueInput);
-            newItem.appendChild(yearInput);
-            newItem.appendChild(removeButton);
-            list.appendChild(newItem);
-        }
-
-        function removeItem(button) {
-            const listItem = button.parentNode;
-            listItem.remove();
-        }
-
-        function calculateUltimate() {
-            const timePeriod = parseFloat(document.getElementById('timePeriod').value) || 1;
-            const discountRate = parseFloat(document.getElementById('discountRate').value) / 100 || 0;
-            const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100 || 0;
-            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100 || 0;
-            const npvDifferenceThreshold = parseFloat(document.getElementById('npvDifferenceThreshold').value) || 0;
-
-            // --- HELPER FUNCTIONS (getMonthlyLoanPayment defined outside) ---
-            const getPresentValue = (amount, year) => amount / Math.pow(1 + discountRate, year);
-            const getAnnualizedValue = (value, frequency) => {
-                switch(frequency) {
-                    case 'monthly': return value * 12;
-                    case 'quarterly': return value * 4;
-                    default: return value;
-                }
-            };
-
-            const getMonthlyLoanPayment = (loanAmount, interestRate, loanTerm) => {
-                if (loanAmount <= 0 || interestRate <= 0 || loanTerm <= 0) return 0;
-                const r = (interestRate / 100) / 12; // Monthly interest rate
-                const n = loanTerm * 12; // Total number of payments
-                const monthlyPayment = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-                return isNaN(monthlyPayment) ? 0 : monthlyPayment;
-            };
-            // REMOVED getLoanInterest, replaced with getMonthlyLoanPayment (defined above)
-            const getFinalValue = (initialValue, depreciationMethod, depreciationRate, years) => {
-                if (depreciationMethod === 'straightLine') {
-                    const finalValue = initialValue - ((initialValue * (depreciationRate / 100)) * years);
-                    return Math.max(0, finalValue);
-                } else {
-                    return initialValue * Math.pow(1 - (depreciationRate / 100), years);
-                }
-            };
-            
-            // --- Calculate NPV for Option A (New) ---
-            const newPurchasePrice = parseFloat(document.getElementById('newPurchasePrice').value) || 0;
-            const newLoanAmount = parseFloat(document.getElementById('newLoanAmount').value) || 0;
-            const newInterestRate = parseFloat(document.getElementById('newInterestRate').value) || 0;
-            const newLoanTerm = parseFloat(document.getElementById('newLoanTerm').value) || 0;
-            
-            // Initial cash outflow is the down payment
-            let npvA = -(newPurchasePrice - newLoanAmount); 
-            
-            // ADDED: Calculate the annual loan payment
-            const monthlyLoanPaymentA = getMonthlyLoanPayment(newLoanAmount, newInterestRate, newLoanTerm);
-            const annualLoanPaymentA = monthlyLoanPaymentA * 12;
-
-            const newDepreciationMethod = document.getElementById('newDepreciationMethod').value;
-            const newDepreciationRate = parseFloat(document.getElementById('newDepreciationRate').value) || 0;
-            const newFinalValue = getFinalValue(newPurchasePrice, newDepreciationMethod, newDepreciationRate, timePeriod);
-            const newResaleValue = parseFloat(document.getElementById('newResaleValue').value) || newFinalValue;
-            
-            const capitalGainA = newResaleValue - newPurchasePrice;
-            const taxImpactA = capitalGainA > 0 ? capitalGainA * taxRate : 0;
-
-            // REMOVED: The incorrect block that calculated and discounted total interest
-            /*
-            if (newLoanAmount > 0) {
-                npvA -= getPresentValue(newTotalInterest, newLoanTerm);
-            }
-            */
-            
-            const newRecurringItems = document.querySelectorAll('#newRecurringList .item');
-            for (let year = 1; year <= timePeriod; year++) {
-                let yearNetValue = 0;
-                newRecurringItems.forEach(item => {
-                    const value = parseFloat(item.querySelector('input[type="number"]').value) || 0;
-                    const type = item.querySelector('select').value;
-                    const frequency = item.querySelectorAll('select')[1].value;
-                    
-                    const annualizedValue = getAnnualizedValue(value, frequency);
-                    const inflatedValue = annualizedValue * Math.pow(1 + inflationRate, year - 1);
-                    
-                    if (type === 'cost') {
-                        yearNetValue -= inflatedValue;
-                    } else {
-                        yearNetValue += inflatedValue;
-                    }
-                });
-
-                // ADDED: Subtract the annual loan payment for each year of the loan term
-                if (annualLoanPaymentA > 0 && year <= newLoanTerm) {
-                    // Note: Loan payments are typically not inflation-adjusted
-                    yearNetValue -= annualLoanPaymentA;
-                }
-
-                npvA += getPresentValue(yearNetValue, year);
-            }
-            npvA += getPresentValue(newResaleValue - taxImpactA, timePeriod);
-
-            // --- Calculate NPV for Option B (Old) ---
-            // (No changes needed for Option B's calculations)
-            const oldInitialCost = parseFloat(document.getElementById('oldInitialCost').value) || 0;
-            const oldCurrentValue = parseFloat(document.getElementById('oldCurrentValue').value) || 0;
-
-            let npvB = -oldInitialCost;
-            if (oldCurrentValue > 0) {
-                npvB -= oldCurrentValue; // Opportunity cost
-            }
-
-            const oldDepreciationMethod = document.getElementById('oldDepreciationMethod').value;
-            const oldDepreciationRate = parseFloat(document.getElementById('oldDepreciationRate').value) || 0;
-            const oldFinalValue = getFinalValue(oldCurrentValue, oldDepreciationMethod, oldDepreciationRate, timePeriod);
-            const oldResaleValue = parseFloat(document.getElementById('oldResaleValue').value) || oldFinalValue;
-            
-            const capitalGainB = oldResaleValue - oldCurrentValue;
-            const taxImpactB = capitalGainB > 0 ? capitalGainB * taxRate : 0;
-            
-            const oldRecurringItems = document.querySelectorAll('#oldRecurringList .item');
-            for (let year = 1; year <= timePeriod; year++) {
-                let yearNetValue = 0;
-                oldRecurringItems.forEach(item => {
-                    const value = parseFloat(item.querySelector('input[type="number"]').value) || 0;
-                    const type = item.querySelector('select').value;
-                    const frequency = item.querySelectorAll('select')[1].value;
-
-                    const annualizedValue = getAnnualizedValue(value, frequency);
-                    const inflatedValue = annualizedValue * Math.pow(1 + inflationRate, year - 1);
-
-                    if (type === 'cost') {
-                        yearNetValue -= inflatedValue;
-                    } else {
-                        yearNetValue += inflatedValue;
-                    }
-                });
-                npvB += getPresentValue(yearNetValue, year);
-            }
-            npvB += getPresentValue(oldResaleValue - taxImpactB, timePeriod);
-            
-            const oldNonAnnualItems = document.querySelectorAll('#oldNonAnnualList .item');
-            oldNonAnnualItems.forEach(item => {
-                const cost = parseFloat(item.querySelectorAll('input')[1].value) || 0;
-                const year = parseFloat(item.querySelectorAll('input')[2].value) || 0;
-                if (year > 0 && year <= timePeriod) {
-                    npvB -= getPresentValue(cost, year);
-                }
-            });
-
-            // --- Display the result and recommendation ---
-            // (No changes needed in the display logic)
-            const resultElement = document.getElementById('result');
-            resultElement.innerHTML = `
-                <p>Net Present Value (NPV) for Option A: <strong>$${npvA.toFixed(2)}</strong></p>
-                <p>Net Present Value (NPV) for Option B: <strong>$${npvB.toFixed(2)}</strong></p>
-            `;
-            
-            const resultBox = document.createElement('div');
-            resultBox.className = 'result-box';
-            
-            const recommendationDiv = document.getElementById('recommendation');
-            recommendationDiv.innerHTML = '';
-            recommendationDiv.className = '';
-
-            if (npvA > npvB + npvDifferenceThreshold) {
-                resultBox.classList.add('cheaper');
-                resultBox.innerHTML = `Option A is the better choice, with a greater Net Present Value.`;
-                recommendationDiv.classList.add('cheaper');
-                recommendationDiv.innerHTML = 'Based on the numbers, you should seriously consider buying a new one. It is the more financially sound decision in the long run.';
-            } else if (npvB > npvA + npvDifferenceThreshold) {
-                resultBox.classList.add('cheaper');
-                resultBox.innerHTML = `Option B is the better choice, with a greater Net Present Value.`;
-                recommendationDiv.classList.add('cheaper');
-                recommendationDiv.innerHTML = 'Based on the numbers, you should stick with the old one and consider repairing or upgrading it instead.';
-            } else {
-                resultBox.classList.add('neutral');
-                resultBox.innerHTML = `Both options have very similar Net Present Values.`;
-                recommendationDiv.classList.add('neutral');
-                recommendationDiv.innerHTML = 'The financial outcomes are too close to call. You should consider non-financial factors like convenience, reliability, or personal preference to make your final decision.';
-            }
-
-            resultElement.appendChild(resultBox);
-        }
-
-
-        window.onload = function() {
-            clearAllFields();
-        };
-    </script>
+    // Chart
+    let cfChart;
+    function drawChart(series,T){
+      const labels=Array.from({length:T+1},(_,i)=>i);
+      const datasets=series.map(s=>({label:s.name,data:s.data,fill:false,tension:0.2}));
+      const ctx=document.getElementById('cfChart').getContext('2d');
+      if(cfChart&&typeof cfChart.destroy==="function") cfChart.destroy();
+      cfChart=new Chart(ctx,{type:'line',data:{labels,datasets},
+        options:{plugins:{title:{display:true,text:'Cumulative Cash Flow'},legend:{position:'bottom'}}}});
+    }
+  </script>
 </body>
 </html>
