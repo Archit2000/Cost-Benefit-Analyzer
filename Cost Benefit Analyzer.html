@@ -1,3 +1,6 @@
+
+  
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { background:#f8fafc; }
@@ -15,8 +19,16 @@
   </style>
 </head>
 <body class="container py-4">
-
-  <h1 class="text-center text-primary mb-4">Simple Cost–Benefit Analyzer</h1>
+    
+  <!--<h1 class="text-center text-primary mb-4"></h1>-->
+  <figure class="text-center">
+  <blockquote class="blockquote mb-4">
+      <h1 class="text-primary">Simple Cost–Benefit Analyzer</h1>
+    </blockquote>
+    <figcaption class="blockquote-footer">
+      Fighting poor financial choices, one line of code at a time.
+    </figcaption>
+  </figure>
 
   <!-- Global Settings -->
   <div class="card">
@@ -47,24 +59,55 @@
 
   <!-- Action Buttons -->
   <div class="mb-3 d-flex gap-2">
-    <button class="btn btn-outline-secondary" id="addOptionBtn">+ Add Option</button>
+    <button class="btn btn-secondary" id="addOptionBtn">+ Add Option</button>
     <button class="btn btn-primary" id="calcBtn">Calculate</button>
   </div>
 
   <!-- Results -->
   <div id="summary"></div>
-  <div id="tables"></div>
   <div class="card">
     <div class="card-body">
       <canvas id="cfChart" height="150"></canvas>
     </div>
   </div>
+  <div id="tables"></div>
+  
+  <!-- Footer -->
+    <footer class="bg-light text-center text-muted mt-5 py-4 border-top">
+        <div class="container">
+        <p class="mb-2 text-start">
+            Dear Citizen, <br><br>
 
-  <!-- Bootstrap JS (for toggle etc) -->
+Permit me to thank you for accompanying me to the end of this most peculiar contraption: the Simple Cost–Benefit Analyzer. Not forged in the shadowy depths of a cave (though I admit the branding opportunities would have been excellent), but rather assembled through code, caffeine, and a mild disdain for poor financial decisions.
+<br><br>
+Its sole purpose is simple: to slice through confusion and lay bare the one truth that rarely lies — the numbers. Cold, impartial, and, unlike most politicians, incapable of spin.
+<br><br>
+In the footer below, you will find a link to its GitHub repository. Yes, it is open-source — a phrase which here means: “you are free to admire, improve, or mercilessly mock the code.” Should you, through brilliance or sheer stubbornness, fashion a version that outperforms mine, do let me know. Even the most caped of crusaders (and the most proper of butlers) must graciously concede when someone else’s gadget is sharper.
+<br><br>
+Until that day arrives, may your costs remain modest, your benefits plentiful, and inflation… at least less menacing than the Joker.
+<br><br>
+Yours, ever watchful of both rooftops and balance sheets,
+<br>
+Archit
+
+        </p>
+        <div>
+            <a href="https://github.com/Archit2000/Cost-Benefit-Analyzer" target="_blank" class="me-3 text-decoration-none text-success">
+            <i class="bi bi-file-earmark-text"></i> Documentation
+            </a>
+            <a href="https://github.com/Archit2000" target="_blank" class="me-3 text-decoration-none text-dark">
+            <i class="bi bi-github"></i> GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/archit-kane-589040195/" target="_blank" class="me-3 text-decoration-none text-primary">
+            <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+        </div>
+        </div>
+    </footer>
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ========== Helpers ==========
     const FREQ = { yearly: 1, quarterly: 4, monthly: 12 };
     function fmt(n){ return (isFinite(n)? n:0).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
     function annualize(amount, freq){ return (Number(amount)||0) * (FREQ[freq]||1); }
@@ -93,6 +136,14 @@
             <h5>Option ${String.fromCharCode(65+idx)}</h5>
             <button class="btn btn-sm btn-outline-danger remove-option" ${idx===0?'disabled':''}>Remove</button>
           </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Custom Option Name</label>
+              <input type="text" class="form-control opt-name" placeholder="(Optional)">
+            </div>
+          </div>
+
           <div class="row g-3 mt-2">
             <div class="col-md-6">
               <label class="form-label">Purchase Price (Year 0)</label>
@@ -128,7 +179,7 @@
         </div>
       `;
 
-      // Remove
+      // Remove option
       card.querySelector('.remove-option').addEventListener('click', () => {
         card.remove(); calculate();
       });
@@ -198,7 +249,10 @@
       const summaries=[], tablesHTML=[], chartSeries=[];
 
       optionCards.forEach((card,idx)=>{
-        const name=`Option ${String.fromCharCode(65+idx)}`;
+        const defaultName=`Option ${String.fromCharCode(65+idx)}`;
+        const customName=card.querySelector('.opt-name').value.trim();
+        const name=customName || defaultName;
+
         const purchase=parseFloat(card.querySelector('.opt-purchase').value)||0;
         const resale=parseFloat(card.querySelector('.opt-resale').value)||0;
         const depMethod=card.querySelector('.opt-dep-method').value;

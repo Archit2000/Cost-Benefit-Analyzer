@@ -6,7 +6,13 @@ This treatise is a guide. It presents a tool of unassailable reason: the **Simpl
 
 I trust you will find it most… useful.
 
-The analyzer is completely free to use and open-source\! You may put it to the test yourself at your earliest convenience: [Archit2000 | Cost Benefit Analyzer](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Archit2000/Cost-Benefit-Analyzer/refs/heads/main/Cost+Benefit+Analyzer.html)
+The analyzer is completely free to use and open-source\! You may put it to the test yourself at your earliest convenience: 
+
+| Link | Source | Notes |
+|------|---------|-------|
+| [Cost Benefit Analyzer](https://rawcdn.githack.com/Archit2000/Cost-Benefit-Analyzer/refs/heads/main/Cost%20Benefit%20Analyzer.html) | GitHack CDN | Fastest, production-ready CDN link |
+| [Cost Benefit Analyzer](https://raw.githack.com/Archit2000/Cost-Benefit-Analyzer/refs/heads/main/Cost%20Benefit%20Analyzer.html) | GitHack Raw | Useful for quick testing, may be slower |
+| [Cost Benefit Analyzer](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Cost-Benefit-Analyzer/refs/heads/main/Cost+Benefit+Analyzer.html) | GitHub HTMLPreview | Backup option if GitHack is down |
 
 ## **The Methodology: A Framework for Rationality**
 
@@ -99,14 +105,14 @@ A calculated risk with a lower initial sacrifice.
 
 ## **Frequently Pondered Inquiries**
 
-**Q: Why is time a variable in my calculations?**
+**Q: Why is time a variable in my calculations?**  
 A: Time, my dear fellow, is the most crucial of all variables. It is the canvas upon which all financial events—from the predictable utility bill to the subtle theft of inflation—are painted. To ignore time is to ignore the fundamental forces at play. One cannot solve a puzzle while ignoring half the pieces.  
 
-**Q: What is the distinction between an expenditure and a gain?**
+**Q: What is the distinction between an expenditure and a gain?**  
 A: An expenditure, or a Cost, is a drain on your resources. It is the villain in this scenario. A gain, or a Benefit, replenishes them. It is the hero. The analyzer measures the final outcome of this eternal struggle between them.  
 
-**Q: My asset has no value at the end of the analysis. Why?**
+**Q: My asset has no value at the end of the analysis. Why?**  
 A: Ah, a common but understandable concern. If you did not specify a resale value, the tool, in its unwavering logic, calculated that the asset's worth had been entirely consumed by depreciation over its useful life. For instance, consider a theatrical prop, once magnificent, now relegated to the rubbish bin. Its purpose served, its value is now quite simply zero. This is the reality of its decay.  
 
-**Q: Why is the final cumulative value different from the total of my inputs?**
+**Q: Why is the final cumulative value different from the total of my inputs?**  
 A: This, I'm afraid, is the consequence of that aforementioned villain: inflation. It is not a myth, nor a trick of the light. It is a quantifiable force that quietly reduces the real value of future funds. The analyzer, in its wisdom, sees this force for what it is and adjusts its calculations accordingly, providing a more… sobering reality.
