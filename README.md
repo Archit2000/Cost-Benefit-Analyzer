@@ -6,7 +6,7 @@ You can test the analyzer instantly (**no installs required**):
 
 | Link                                                                                                                                                       | Source             | Notes                                   |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------- |
-| [Cost Benefit Analyzer](https://rawcdn.githack.com/Archit2000/Cost-Benefit-Analyzer/refs/heads/main/Cost%20Benefit%20Analyzer.html)                        | GitHack CDN        | Fastest, production-ready CDN link      |
+| [Cost Benefit Analyzer](https://rawcdn.githack.com/Archit2000/Cost-Benefit-Analyzer/7dcedc8b2df90e92f90181bf76edd9b943521500/Cost%20Benefit%20Analyzer.html)                        | GitHack CDN        | Fastest, production-ready CDN link      |
 | [Cost Benefit Analyzer](https://raw.githack.com/Archit2000/Cost-Benefit-Analyzer/refs/heads/main/Cost%20Benefit%20Analyzer.html)                           | GitHack Raw        | Useful for quick testing, may be slower |
 
 ---
